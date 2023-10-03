@@ -128,7 +128,7 @@ metrics = pd.DataFrame(model.history.history)
 metrics.head()
 metrics[['accuracy','val_accuracy']].plot()
 metrics[['loss','val_loss']].plot()
-i = 20
+i = 79
 p = model.predict(np.array([X_test[i]]))
 p = np.argmax(p, axis=-1)
 y_true = y_test[i]
@@ -141,12 +141,15 @@ for w, true, pred in zip(X_test[i], y_true, p[0]):
 ## OUTPUT
 
 ### Training Loss:
-![img1](https://github.com/vijay21500269/named-entity-recognition/blob/main/dl1.png)
+![image](https://github.com/SaiDarshan2003/named-entity-recognition/assets/94692595/118635d2-da07-4994-b526-0cfcd789d468)
+
 ### Training Loss vs Validation loss:
-![img](https://github.com/vijay21500269/named-entity-recognition/blob/main/dl2.png)
+![image](https://github.com/SaiDarshan2003/named-entity-recognition/assets/94692595/21743c92-d284-4d2a-a933-6b58a83b09a2)
+
 
 ### Sample Text Prediction:
-![Uploading image.png…]()
+![image](https://github.com/SaiDarshan2003/named-entity-recognition/assets/94692595/5050fb38-863b-4293-8d0e-9403e085aa27)
+
 
 ## RESULT
 Successfully developed LSTM based rnn model for named-entity-recognition.
