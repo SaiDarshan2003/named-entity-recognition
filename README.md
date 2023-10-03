@@ -33,6 +33,8 @@ Plot the Stock prediction plot
 Developed by: Sai Darshan G
 Reg No:212221240047
 ~~~
+
+Importing Libraries
 ```
 import matplotlib.pyplot as plt
 import pandas as pd
@@ -41,19 +43,28 @@ from tensorflow.keras.preprocessing import sequence
 from sklearn.model_selection import train_test_split
 from keras import layers
 from keras.models import Model
+```
+
+Reading the dataset
+```
 data = pd.read_csv("ner_dataset.csv", encoding="latin1")
-data.head(50)
 data = data.fillna(method="ffill")
-data.head(50)
 print("Unique words in corpus:", data['Word'].nunique())
 print("Unique tags in corpus:", data['Tag'].nunique())
+```
+
+Listing the words and tags
+```
 words=list(data['Word'].unique())
 words.append("ENDPAD")
 tags=list(data['Tag'].unique())
 print("Unique tags are:", tags)
 num_words = len(words)
 num_tags = len(tags)
-num_words
+```
+
+Function to grouping the sentences
+```
 class SentenceGetter(object):
     def __init__(self, data):
         self.n_sent = 1
@@ -72,19 +83,22 @@ class SentenceGetter(object):
             return s
         except:
             return None
+
 getter = SentenceGetter(data)
 sentences = getter.sentences
-len(sentences)
-sentences[0]
+```
+
+Enumeration
+```
 word2idx = {w: i + 1 for i, w in enumerate(words)}
 tag2idx = {t: i for i, t in enumerate(tags)}
-word2idx
 plt.hist([len(s) for s in sentences], bins=50)
-plt.show()
 X1 = [[word2idx[w[0]] for w in s] for s in sentences]
-type(X1[0])
-X1[0]
 max_len = 50
+```
+
+Reshaping
+```
 nums = [[1], [2, 3], [4, 5, 6]]
 sequence.pad_sequences(nums)
 nums = [[1], [2, 3], [4, 5, 6]]
@@ -92,7 +106,6 @@ sequence.pad_sequences(nums,maxlen=2)
 X = sequence.pad_sequences(maxlen=max_len,
                   sequences=X1, padding="post",
                   value=num_words-1)
-X[0]
 y1 = [[tag2idx[w[2]] for w in s] for s in sentences]
 y = sequence.pad_sequences(maxlen=max_len,
                   sequences=y1,
@@ -100,8 +113,9 @@ y = sequence.pad_sequences(maxlen=max_len,
                   value=tag2idx["O"])
 X_train, X_test, y_train, y_test = train_test_split(X, y,
                                                     test_size=0.2, random_state=1)
-X_train[0]
-y_train[0]
+```
+Model Creation
+```
 input_word = layers.Input(shape=(max_len,))
 embedding_layer = layers.Embedding(input_dim=num_words,
                                    output_dim=50,
@@ -113,6 +127,9 @@ bidirectional_lstm = layers.Bidirectional(
 output = layers.TimeDistributed(
     layers.Dense(num_tags, activation="softmax"))(bidirectional_lstm)                                                
 model = Model(input_word, output)  
+```
+Summary,Compiling and fitting
+```
 model.summary()
 model.compile(optimizer="adam",
               loss="sparse_categorical_crossentropy",
@@ -128,6 +145,9 @@ metrics = pd.DataFrame(model.history.history)
 metrics.head()
 metrics[['accuracy','val_accuracy']].plot()
 metrics[['loss','val_loss']].plot()
+```
+Prediction Sequence
+```
 i = 79
 p = model.predict(np.array([X_test[i]]))
 p = np.argmax(p, axis=-1)
